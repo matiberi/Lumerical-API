@@ -31,7 +31,7 @@ class GrapheneSimulation:
     def load_lumapi_module(self):
         #lumapi_path = "C:\\Program Files\\Lumerical\\v221\\api\\python\\lumapi.py"  # Mat laptop
         #lumapi_path = "C:\\Program Files\\Lumerical\\v222\\api\\python\\lumapi.py"  # CGC desktop
-        lumapi_path = "C:\Program Files\Lumerical\v251\api\python\lumapi.py"  # 2DP laptop
+        lumapi_path = "C:\\Program Files\\Lumerical\\v251\\api\\python\\lumapi.py"  # 2DP laptop
         spec = importlib.util.spec_from_file_location("lumapi", lumapi_path)
         lumapi_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(lumapi_module)
@@ -328,21 +328,21 @@ class ElectronicCircuitAnalysis:
        hbar = 6.582e-16  # eV.s Planck constant
        hbar1 = 1.055e-34  # J.s Planck constant
        e0 = 1.602e-19  # C electronic charge
-       eps0 = 8.854e-12  # F/m free space permitivty
-       eps1 = 7.0  # relative permitivity of Al2O3+hBN
-       dox = 20e-9  # dielectric thickness
-       Lu = 0.4e-6  # Ungated graphene length
-       wu = 20e-6  # Ungated graphene width
-       Lg = 0.65e-6  # Gated graphene length
-       wg = 20e-6  # Gated graphene width
+       eps0 = 8.854e-12  # F/m free space permittivty
+       eps1 = 6.  # relative permitivity of Al2O3+hBN
+       dox = 50e-9  # dielectric thickness
+       Lu = 0.45e-6  # Ungated graphene length
+       wu = 40e-6  # Ungated graphene width
+       Lg = 0.55e-6  # Gated graphene length
+       wg = 40e-6  # Gated graphene width
 
        Cox = eps0 * eps1 / dox  # F/m2 oxide capacitance
        Cox1 = Cox * Lg * wg  # F total oxide capacitance
 
        Ef = 0.4  # eV Fermi energy in gated graphene
        Efu = 0.25  # eV Fermi energy in ungated graphene
-       tao = 300e-15  # s Scattering time of gated graphene
-       Rc = 600  # Ohm.um Contact resistance
+       tao = 350e-15  # s Scattering time of gated graphene
+       Rc = 500  # Ohm.um Contact resistance
        Rct = Rc / (wu * 1e+6)  # Ohm Total contact resistance
 
        Cq = 2 * e0 * e0 * Ef / (hbar * hbar1 * vf * vf * np.pi)  # F/m2 Quantum capacitance
@@ -381,7 +381,7 @@ class ElectronicCircuitAnalysis:
        plt.show()
        
        data = np.column_stack((np.real(ff), np.real(10*np.log(absVolr))))
-       np.savetxt("simulated_BW_SuSi/200umLength_80nmOx_eps7_1500nmGated_3500nmUngated_300fs_60Ohmum.txt", data, header='Frequency (Hz)\tEO Bandwidth (dB)', fmt='%.2e\t%.6f')
+       np.savetxt("simulated_BW_40umLength_50nmOx_350fs_50Ohmum.txt", data, header='Frequency (Hz)\tEO Bandwidth (dB)', fmt='%.2e\t%.6f')
        
        return Ceq, Rt, eo_bandwidth, mob, taou, Rgateds, Rungateds, Cox
 
@@ -397,13 +397,13 @@ gamma_values = [hbar / tau for tau in tau_values]
 
 slg_overlap = [overlap for overlap in slg_overlap_values]
 
-graphene_sim = GrapheneSimulation(simulation_type="FDE", mu_values=mu_values, gamma_values=gamma_values, slg_overlap=slg_overlap)
-graphene_sim.run_simulations()
+#graphene_sim = GrapheneSimulation(simulation_type="FDE", mu_values=mu_values, gamma_values=gamma_values, slg_overlap=slg_overlap)
+#graphene_sim.run_simulations()
 
 # Process FDE results for specific gamma values
-gamma_to_process = gamma_values  # Choose a gamma value from your list
-L, ER, delta_phi = graphene_sim._process_fde_results(gamma_to_process, hbar)
+#gamma_to_process = gamma_values  # Choose a gamma value from your list
+#L, ER, delta_phi = graphene_sim._process_fde_results(gamma_to_process, hbar)
 
 # Frequency response of equivalent circuit
-#circuit_analysis = ElectronicCircuitAnalysis()
-#Ceq, Rt, eo_bandwidth, mob, taou, Rgateds, Rungateds, Cox = circuit_analysis.analyze_circuit()
+circuit_analysis = ElectronicCircuitAnalysis()
+Ceq, Rt, eo_bandwidth, mob, taou, Rgateds, Rungateds, Cox = circuit_analysis.analyze_circuit()
